@@ -1,8 +1,688 @@
 <html>
-    <title><h1>Local Repo.</h1></title>
+
+<head></head>
 
 <body>
-<link rel="stylesheet" href="style.css">
-<p>This is the program for  another checking.</p>  
-<p>this is the new line</p>
-</body>    </html>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;700&display=swap');
+
+        #universe {
+            width: 100%;
+            height: 100vh;
+            background: #060d06;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        #bg-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%
+        }
+
+        .card-scene {
+            perspective: 1000px;
+            z-index: 10;
+            position: relative
+        }
+
+        .profile-card {
+            width: 560px;
+            background: #0d1a0d;
+            border: 1px solid #1a3d1a;
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            cursor: default;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .profile-card.hovered {
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.15), 0 0 80px rgba(0, 255, 65, 0.06)
+        }
+
+        .scan-line {
+            position: absolute;
+            top: -5%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            animation: scan 3s linear infinite;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 20
+        }
+
+        @keyframes scan {
+            0% {
+                top: -5%
+            }
+
+            100% {
+                top: 105%
+            }
+        }
+
+        .shine-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            pointer-events: none;
+            z-index: 15;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 65, 0.06) 0%, transparent 70%)
+        }
+
+        .corner {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            z-index: 5
+        }
+
+        .c-tl {
+            top: 0;
+            left: 0;
+            border-top: 2px solid #00ff41;
+            border-left: 2px solid #00ff41;
+            border-radius: 14px 0 0 0
+        }
+
+        .c-tr {
+            top: 0;
+            right: 0;
+            border-top: 2px solid #00ff41;
+            border-right: 2px solid #00ff41;
+            border-radius: 0 14px 0 0
+        }
+
+        .c-bl {
+            bottom: 0;
+            left: 0;
+            border-bottom: 2px solid #00ff41;
+            border-left: 2px solid #00ff41;
+            border-radius: 0 0 0 14px
+        }
+
+        .c-br {
+            bottom: 0;
+            right: 0;
+            border-bottom: 2px solid #00ff41;
+            border-right: 2px solid #00ff41;
+            border-radius: 0 0 14px 0
+        }
+
+        .header-section {
+            background: #0f1f0f;
+            padding: 1.5rem 1.75rem 1.25rem;
+            border-bottom: 1px solid #1a3d1a;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            position: relative
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(0, 255, 65, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 65, 0.04) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none
+        }
+
+        .avatar-wrap {
+            position: relative;
+            flex-shrink: 0
+        }
+
+        .avatar {
+            width: 74px;
+            height: 74px;
+            border-radius: 50%;
+            background: #0a1a0a;
+            border: 2px solid #00ff41;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #00ff41;
+            font-family: 'Share Tech Mono', monospace;
+            animation: pulse-b 2s ease-in-out infinite
+        }
+
+        @keyframes pulse-b {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.3)
+            }
+
+            50% {
+                box-shadow: 0 0 0 7px rgba(0, 255, 65, 0)
+            }
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            width: 11px;
+            height: 11px;
+            background: #00ff41;
+            border-radius: 50%;
+            border: 2px solid #0d1a0d;
+            animation: blink 1.5s ease-in-out infinite
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.2
+            }
+        }
+
+        .name-tag {
+            font-size: 9px;
+            color: #00ff41;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 3px;
+            margin-bottom: 3px;
+            opacity: 0.65
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #e8ffe8;
+            letter-spacing: 1px;
+            line-height: 1.1;
+            margin-bottom: 3px
+        }
+
+        .designation {
+            font-size: 13px;
+            color: #00cc33;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+            margin-bottom: 8px
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap
+        }
+
+        .badge {
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase
+        }
+
+        .bg {
+            background: #0d2a0d;
+            border: 1px solid #00cc33;
+            color: #00cc33
+        }
+
+        .bd {
+            background: #111;
+            border: 1px solid #333;
+            color: #888
+        }
+
+        .section {
+            padding: 1rem 1.75rem;
+            border-bottom: 1px solid #1a3d1a
+        }
+
+        .section:last-of-type {
+            border-bottom: none
+        }
+
+        .sec-label {
+            font-size: 9px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #00ff41;
+            letter-spacing: 3px;
+            margin-bottom: 7px;
+            opacity: 0.65
+        }
+
+        .summary-text {
+            font-size: 13px;
+            color: #8aaa8a;
+            line-height: 1.6
+        }
+
+        .summary-text span {
+            color: #aaccaa
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 7px;
+            margin-top: 7px
+        }
+
+        .skill-item {
+            background: #0a140a;
+            border: 1px solid #1a3d1a;
+            border-radius: 6px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: border-color 0.2s, background 0.2s, transform 0.15s
+        }
+
+        .skill-item:hover {
+            border-color: #00ff41;
+            background: #0f2a0f;
+            transform: translateY(-2px)
+        }
+
+        .skill-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #00ff41;
+            flex-shrink: 0
+        }
+
+        .skill-name {
+            font-size: 11px;
+            color: #aaccaa;
+            font-family: 'Share Tech Mono', monospace
+        }
+
+        .exp-card {
+            background: #0a140a;
+            border: 1px solid #1a3d1a;
+            border-left: 3px solid #00cc33;
+            border-radius: 0 6px 6px 0;
+            padding: 9px 13px;
+            margin-top: 7px
+        }
+
+        .exp-role {
+            font-size: 13px;
+            font-weight: 700;
+            color: #cceecc;
+            margin-bottom: 2px
+        }
+
+        .exp-co {
+            font-size: 11px;
+            color: #00cc33;
+            font-family: 'Share Tech Mono', monospace;
+            margin-bottom: 4px
+        }
+
+        .exp-dur {
+            display: inline-block;
+            font-size: 9px;
+            padding: 1px 7px;
+            background: #0d2a0d;
+            border: 1px solid #1a5a1a;
+            border-radius: 3px;
+            color: #00ff41;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px
+        }
+
+        .links-section {
+            padding: 1rem 1.75rem 1.25rem;
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap
+        }
+
+        .link-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 13px;
+            border-radius: 5px;
+            border: 1px solid #1a3d1a;
+            background: #0a140a;
+            color: #aaccaa;
+            font-size: 11px;
+            font-family: 'Share Tech Mono', monospace;
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.15s;
+            letter-spacing: 0.5px
+        }
+
+        .link-btn:hover {
+            border-color: #00ff41;
+            color: #00ff41;
+            background: #0f1f0f;
+            transform: translateY(-2px)
+        }
+
+        .link-btn svg {
+            width: 13px;
+            height: 13px;
+            fill: currentColor;
+            flex-shrink: 0
+        }
+
+        .footer-bar {
+            border-top: 1px solid #1a3d1a;
+            padding: 7px 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .footer-text {
+            font-size: 9px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #2a5a2a;
+            letter-spacing: 1px
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 6px;
+            height: 11px;
+            background: #00ff41;
+            animation: cb 1s step-end infinite;
+            vertical-align: middle;
+            border-radius: 1px
+        }
+
+        @keyframes cb {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+    </style>
+
+    <div id="universe">
+        <canvas id="bg-canvas" width="1920" height="820" style="width: 1920px; height: 820px;"></canvas>
+        <div class="card-scene">
+            <div class="profile-card" id="card" style="transform: rotateX(0deg) rotateY(0deg) scale(1);">
+                <div class="scan-line"></div>
+                <div class="shine-overlay" id="shine"
+                    style="opacity: 0; background: radial-gradient(circle at 36% 32%, rgba(0, 255, 65, 0.09) 0%, transparent 65%);">
+                </div>
+                <div class="corner c-tl"></div>
+                <div class="corner c-tr"></div>
+                <div class="corner c-bl"></div>
+                <div class="corner c-br"></div>
+
+                <div class="header-section">
+                    <div class="grid-bg"></div>
+                    <div class="avatar-wrap">
+                        <div class="avatar">SS</div>
+                        <div class="status-dot"></div>
+                    </div>
+                    <div style="flex:1">
+                        <div class="name-tag">// PLAYER PROFILE</div>
+                        <div class="name">Sumit Sharma</div>
+                        <div class="designation">&gt; Junior Data Analyst</div>
+                        <div class="badge-row">
+                            <span class="badge bg">Data</span>
+                            <span class="badge bg">Analytics</span>
+                            <span class="badge bd">MIS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="sec-label">// ABOUT</div>
+                    <div class="summary-text">A results-driven data professional with a keen eye for turning raw numbers
+                        into actionable insights. With <span>2+ years of MIS executive experience</span>, Sumit bridges
+                        data infrastructure with business intelligence — transforming spreadsheets into strategy.</div>
+                </div>
+
+                <div class="section">
+                    <div class="sec-label">// SKILL TREE</div>
+                    <div class="skills-grid">
+                        <div class="skill-item">
+                            <div class="skill-dot"></div>
+                            <div class="skill-name">Excel (Adv.)</div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-dot"></div>
+                            <div class="skill-name">MySQL</div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-dot"></div>
+                            <div class="skill-name">PostgreSQL</div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-dot"></div>
+                            <div class="skill-name">Power BI</div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-dot"></div>
+                            <div class="skill-name">Python</div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-dot"></div>
+                            <div class="skill-name">MS PowerPoint</div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-dot"></div>
+                            <div class="skill-name">MS Word</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="sec-label">// EXPERIENCE LOG</div>
+                    <div class="exp-card">
+                        <div class="exp-role">MIS Executive</div>
+                        <div class="exp-co">Riddhi Corporate</div>
+                        <span class="exp-dur">2 YEARS</span>
+                    </div>
+                </div>
+
+                <div class="links-section">
+                    <a class="link-btn" href="mailto:sharmasummitzukz1@gmail.com">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z">
+                            </path>
+                        </svg>Gmail
+                    </a>
+                    <a class="link-btn" href="https://www.linkedin.com/in/sumit-sharma-b816aa390/" target="_blank">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z">
+                            </path>
+                        </svg>LinkedIn
+                    </a>
+                    <a class="link-btn" href="https://github.com/Sumit-Sharma07" target="_blank">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.38 7.86 10.9.58.1.79-.25.79-.56 0-.28-.01-1.01-.02-1.98-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.53-2.55-.29-5.23-1.27-5.23-5.67 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.17a10.97 10.97 0 0 1 2.87-.39c.97 0 1.95.13 2.87.39 2.18-1.48 3.14-1.17 3.14-1.17.63 1.58.23 2.75.12 3.04.74.8 1.18 1.82 1.18 3.07 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.07.78 2.15 0 1.55-.01 2.8-.01 3.18 0 .31.21.67.8.56C20.22 21.37 23.5 17.08 23.5 12 23.5 5.73 18.27.5 12 .5z">
+                            </path>
+                        </svg>GitHub
+                    </a>
+                </div>
+
+                <div class="footer-bar">
+                    <span class="footer-text">STATUS: AVAILABLE FOR OPPORTUNITIES</span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        (function () {
+            const canvas = document.getElementById('bg-canvas');
+            const container = document.getElementById('universe');
+            const W = container.clientWidth, H = container.clientHeight;
+            canvas.width = W; canvas.height = H;
+
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(W, H);
+            renderer.setClearColor(0x060d06, 1);
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 1000);
+            camera.position.z = 80;
+
+            const PARTICLE_COUNT = 280;
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            const velocities = [];
+            const sizes = new Float32Array(PARTICLE_COUNT);
+            const colors = new Float32Array(PARTICLE_COUNT * 3);
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 160;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+                velocities.push({
+                    x: (Math.random() - 0.5) * 0.06,
+                    y: (Math.random() - 0.5) * 0.06,
+                    z: (Math.random() - 0.5) * 0.03
+                });
+                sizes[i] = Math.random() * 2.5 + 0.8;
+                const bright = 0.3 + Math.random() * 0.7;
+                colors[i * 3] = 0;
+                colors[i * 3 + 1] = bright;
+                colors[i * 3 + 2] = bright * 0.25;
+            }
+
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const mat = new THREE.PointsMaterial({
+                size: 1.8, vertexColors: true, transparent: true, opacity: 0.75,
+                sizeAttenuation: true
+            });
+            const points = new THREE.Points(geo, mat);
+            scene.add(points);
+
+            const lineGeo = new THREE.BufferGeometry();
+            const linePositions = new Float32Array(PARTICLE_COUNT * PARTICLE_COUNT * 6);
+            lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x00ff41, transparent: true, opacity: 0.06 });
+            const lineSegs = new THREE.LineSegments(lineGeo, lineMat);
+            scene.add(lineSegs);
+
+            let mouseX = 0, mouseY = 0;
+            container.addEventListener('mousemove', e => {
+                const r = container.getBoundingClientRect();
+                mouseX = (e.clientX - r.left) / r.width - 0.5;
+                mouseY = (e.clientY - r.top) / r.height - 0.5;
+            });
+
+            const CONN_DIST = 28;
+            function animate() {
+                requestAnimationFrame(animate);
+                const pos = geo.attributes.position.array;
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    pos[i * 3] += velocities[i].x;
+                    pos[i * 3 + 1] += velocities[i].y;
+                    pos[i * 3 + 2] += velocities[i].z;
+                    if (pos[i * 3] > 100 || pos[i * 3] < -100) velocities[i].x *= -1;
+                    if (pos[i * 3 + 1] > 80 || pos[i * 3 + 1] < -80) velocities[i].y *= -1;
+                    if (pos[i * 3 + 2] > 40 || pos[i * 3 + 2] < -40) velocities[i].z *= -1;
+                }
+                geo.attributes.position.needsUpdate = true;
+
+                let lineIdx = 0;
+                const lp = lineGeo.attributes.position.array;
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    for (let j = i + 1; j < PARTICLE_COUNT; j++) {
+                        const dx = pos[i * 3] - pos[j * 3], dy = pos[i * 3 + 1] - pos[j * 3 + 1], dz = pos[i * 3 + 2] - pos[j * 3 + 2];
+                        const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                        if (d < CONN_DIST && lineIdx < linePositions.length - 5) {
+                            lp[lineIdx++] = pos[i * 3]; lp[lineIdx++] = pos[i * 3 + 1]; lp[lineIdx++] = pos[i * 3 + 2];
+                            lp[lineIdx++] = pos[j * 3]; lp[lineIdx++] = pos[j * 3 + 1]; lp[lineIdx++] = pos[j * 3 + 2];
+                        }
+                    }
+                }
+                for (let k = lineIdx; k < lp.length; k++) lp[k] = 0;
+                lineGeo.attributes.position.needsUpdate = true;
+                lineGeo.setDrawRange(0, lineIdx / 3);
+
+                points.rotation.y += 0.0008 + mouseX * 0.002;
+                points.rotation.x += 0.0003 - mouseY * 0.001;
+                lineSegs.rotation.y = points.rotation.y;
+                lineSegs.rotation.x = points.rotation.x;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            const card = document.getElementById('card');
+            const shine = document.getElementById('shine');
+            let tiltX = 0, tiltY = 0, targetTX = 0, targetTY = 0;
+            let isHovered = false;
+
+            card.addEventListener('mouseenter', () => {
+                isHovered = true;
+                card.classList.add('hovered');
+                shine.style.opacity = '1';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                isHovered = false;
+                card.classList.remove('hovered');
+                shine.style.opacity = '0';
+                targetTX = 0; targetTY = 0;
+            });
+
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const cx = (e.clientX - r.left) / r.width;
+                const cy = (e.clientY - r.top) / r.height;
+                targetTX = (cy - 0.5) * 16;
+                targetTY = -(cx - 0.5) * 16;
+                const px = Math.round(cx * 100), py = Math.round(cy * 100);
+                shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(0,255,65,0.09) 0%, transparent 65%)`;
+            });
+
+            function lerpTilt() {
+                requestAnimationFrame(lerpTilt);
+                tiltX += (targetTX - tiltX) * 0.12;
+                tiltY += (targetTY - tiltY) * 0.12;
+                card.style.transform = `rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) scale(${isHovered ? 1.025 : 1})`;
+            }
+            lerpTilt();
+        })();
+    </script>
+</body>
+
+</html>
